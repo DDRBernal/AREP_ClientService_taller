@@ -30,17 +30,27 @@ public class HttpServer {
                             clientSocket.getInputStream()));
             String inputLine, outputLine;
 
-            boolean isHelloName = false;
+            String path = "";
+            boolean firstLine = false;
             while ((inputLine = in.readLine()) != null) {
                 System.out.println("Received: " + inputLine);
-                System.out.println(inputLine.equals("GET /hello?name=John%20 HTTP/1.1"));
-                if (inputLine.equals("GET /hello?name=John%20 HTTP/1.1")) isHelloName = true;
-                if (!in.ready()) {
-                    break;
+                if (firstLine) {
+                    path = inputLine.split(" ")[1];
                 }
             }
-            System.out.println(isHelloName);
-            if (isHelloName){
+            ;
+            if (!in.ready()) {
+                break;
+            }
+            URI pathURI = null;
+            try {
+                pathURI = new URI(path);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+
+
+            if (true) {
                 outputLine = "HTTP/1.1.200 OK \r\n"
                         + "Content-Type: text/html\r\n"
                         + "\r\n"
@@ -56,20 +66,20 @@ public class HttpServer {
                     + "</body>"
                     + "</html>" + inputLine;
                      */
-            } else{
+            } else {
                 outputLine = "HTTP/1.1.200 OK \r\n"
                         + "Content-Type: text/html\r\n"
                         + "\r\n"
-                    + "<!DOCTYPE html>"
-                    + "<html>"
-                    + "<head>"
-                    + "<meta charset=\"UTF-8\">"
-                    + "<title>Title of the document</title>\n"
-                    + "</head>"
-                    + "<body>"
-                    + "My Web Site"
-                    + "</body>"
-                    + "</html>" + inputLine;
+                        + "<!DOCTYPE html>"
+                        + "<html>"
+                        + "<head>"
+                        + "<meta charset=\"UTF-8\">"
+                        + "<title>Title of the document</title>\n"
+                        + "</head>"
+                        + "<body>"
+                        + "My Web Site"
+                        + "</body>"
+                        + "</html>" + inputLine;
             }
 
             out.println(outputLine);
@@ -83,14 +93,13 @@ public class HttpServer {
 //            }
 
 
-
-
             out.close();
             in.close();
             clientSocket.close();
-
-
         }
+
+
+
         //serverSocket.close();
     }
 
